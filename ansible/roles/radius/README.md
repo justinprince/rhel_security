@@ -3,14 +3,36 @@ This role was designed for integration with the Okta RADIUS Agent for Linux in o
 
 ## Prerequisites
 1. Figure out which server will host your RADIUS Agent
-2. Make sure firewalls, etc all traffic in
+2. Make sure firewalls, etc allow traffic in
 ` sudo firewall-cmd --zone=public --add-port=1812/udp `
 or whatever zone you use.
-3. Other prereqs
+
+I'm in Azure and I manage my NSGs with Terraform, so it looks something like this:
+> I just threw this together from another rule, not intended to be perfect - just an example.
+```
+data "azurerm_resource_group" "main" {}
+data "azurerm_network_security_group" "main" {}
+data "azurerm_application_security_group" "rhel_vms" {}
+
+resource "azurerm_network_security_rule" "radius_rule" {
+    name                                        = "s-AllRhelVMs_d-RadiusServer_p-1812" # I <3 verbose
+    priority                                    = 100 
+    direction                                   = "Inbound"
+    access                                      = "Allow"
+    protocol                                    = "Udp" # Watch this, it's picky about casing
+    source_port_range                           = "*"
+    destination_port_range                      = "1812"
+    source_application_security_group_ids       = [data.azurerm_application_security_group.rhel_vms.id]
+    destination_application_security_group_ids  = # data call to exisiting NIC, variable, hard coded
+    resource_group_name                         = data.azurerm_resource_group.main.name
+    network_security_group_name                 = data.azurerm_network_security_group.main.name # Make sure to attach it
+}
+```
+3. Other prereqs TBD.
 
 ## Architecture
-Authentication Server: Okta SaaS tenant
-RADIUS Server: Okta Radius Agent for Linux installed on a VM
+Authentication Server: Okta SaaS tenant\
+RADIUS Server: Okta Radius Agent for Linux installed on a VM\
 Clients: All servers with pam_radius installed and configured to talk to the RADIUS server.
 
 The agent is installed on a server (or potentially container if you want); and listens on port 1812.

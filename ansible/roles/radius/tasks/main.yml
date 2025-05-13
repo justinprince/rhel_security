@@ -38,6 +38,7 @@
         owner: root
         group: root
         mode: '0644'
+        backup: yes
 
     - name: Overwrite-copy the /etc/pam.d/sshd config
       ansible.builtin.copy:
@@ -46,6 +47,7 @@
         owner: root
         group: root
         mode: '0644'
+        backup: yes
 
     - name: Update sshd_config
       shell: |
