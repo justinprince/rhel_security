@@ -31,3 +31,7 @@
         group: root
         mode: '0644'
 
+    - name: Update sshd_config
+      shell: |
+        sudo sed -i -e '/^ChallengeResponseAuthentication no/d' -e '/^#ChallengeResponseAuthentication yes/s/^#//' /etc/ssh/sshd_config
+        systemctl restart sshd

@@ -1,6 +1,13 @@
 # Overview
 This role was designed for integration with the Okta RADIUS Agent for Linux in order to get MFA for SSH.
 
+## Prerequisites
+1. Figure out which server will host your RADIUS Agent
+2. Make sure firewalls, etc all traffic in
+` sudo firewall-cmd --zone=public --add-port=1812/udp `
+or whatever zone you use.
+3. Other prereqs
+
 ## Architecture
 Authentication Server: Okta SaaS tenant
 RADIUS Server: Okta Radius Agent for Linux installed on a VM
@@ -8,6 +15,7 @@ Clients: All servers with pam_radius installed and configured to talk to the RAD
 
 The agent is installed on a server (or potentially container if you want); and listens on port 1812.
 The remote servers receive a PAM configuration that points them to the server with the Agent, which then calls Okta and authenticates the user. The configuration also contains a secret that is generated at the Authentication Server.
+
 
 ## SSH Access
 Users authenticate into the server over SSH and are prompted for a password, which corresponds to their Okta account.
