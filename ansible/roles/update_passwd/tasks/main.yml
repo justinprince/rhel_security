@@ -37,4 +37,4 @@
 
     - name: Success message
       debug:
-        msg: "Password for user {{ username }} has been successfully reset on {{ inventory_hostname }}
+        msg: "Password for user {{ username }} has been successfully reset on {{ inventory_hostname }}"
