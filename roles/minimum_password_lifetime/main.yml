@@ -1,0 +1,27 @@
+# Cronjob that reinforces RHEL8 STIG Control v-230364
+# Set whether the minimum time period between password changes for each user account is one day or greater
+
+---
+- name: Create cronjob script
+  ansible.builtin.copy:
+    source: file
+    dest: dest
+    mode: 0755
+    owner: root
+    group: root
+
+
+- name: set_min_lifetime
+  cron: for user in $(ls /home); do chage -m 1 $user && chage -m 1 root; done
+  tags:
+  - cat2
+  - v-230367
+
+  name: set_max_password_life
+  cron: 
+  shell: for user in $(ls /home); do chage -M 60 $user && chage -M 60 root; done
+
+- name: Copy over login.defs
+  ansible.builtin.copy:
+    source: ./Files/login.defs
+    dest: /etc/login.defs
