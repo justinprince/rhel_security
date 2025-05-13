@@ -5,15 +5,30 @@
   become_user: root
   
   tasks:
+    - name: preflight epel
+      shell: dnf repolist enabled | grep -i epel
+        register: epel_check
+        changed_when: false
+        failed_when: false
+        check_mode: no
     # Resolve GPG Check!
+    - name: preflight pam_radius
+      shell: dnf list installed | grep -i 'pam\_radius'
+        register: radius_check
+        changed_when: false
+        failed_when: false
+        check_mode: no
+
     - name: Install EPEL
       shell: |
         subscription-manager repos --enable codeready-builder-for-rhel-8-$(arch)-rpms
         dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --nogpgcheck
-        
+      when: epel_check.rc != 0
+  
     - name: Install PAM Radius module
       shell: |
         dnf install pam_radius -y
+      when: radius_check.rc != 0
 
     - name: Overwrite-copy the existing pam_radius.conf file
       ansible.builtin.copy:
