@@ -1,0 +1,31 @@
+#%PAM-1.0
+# First check if the user account exists and is enabled
+auth       required     pam_nologin.so
+auth       required     pam_env.so
+ 
+# SSHD+PAM RADIUS for MFA token
+auth       sufficient   pam_radius_auth.so conf=/etc/pam_radius.conf debug retry=3
+ 
+# If RADIUS fails, try local authentication - "required" marks this as necessary
+# This should go once we validate everything works; but since RADIUS is offsite, we need to keep a back door.
+auth       sufficient   pam_unix.so
+ 
+# Account management
+account    required     pam_sepermit.so
+account    required     pam_nologin.so
+account    include      password-auth
+ 
+# Password management
+password   include      password-auth
+ 
+# Session management
+# pam_selinux.so close should be the first session rule
+session    required     pam_selinux.so close
+session    required     pam_loginuid.so
+# pam_selinux.so open should only be followed by sessions to be executed in the user context
+session    required     pam_selinux.so open env_params
+session    required     pam_namespace.so
+session    optional     pam_keyinit.so force revoke
+session    optional     pam_motd.so
+session    include      password-auth
+session    include      postlogin

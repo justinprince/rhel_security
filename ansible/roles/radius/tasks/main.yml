@@ -1,0 +1,33 @@
+---
+- name: Configure RADIUS and all prereqs
+  hosts: all
+  become: yes
+  become_user: root
+  
+  tasks:
+    # Resolve GPG Check!
+    - name: Install EPEL
+      shell: |
+        subscription-manager repos --enable codeready-builder-for-rhel-8-$(arch)-rpms
+        dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --nogpgcheck
+        
+    - name: Install PAM Radius module
+      shell: |
+        dnf install pam_radius -y
+
+    - name: Overwrite-copy the existing pam_radius.conf file
+      ansible.builtin.copy:
+        src: ../files/pam_radius.conf
+        dest: /etc/pam_radius.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Overwrite-copy the /etc/pam.d/sshd config
+      ansible.builtin.copy:
+        src: ../files/sshd
+        dest: /etc/pam.d/sshd
+        owner: root
+        group: root
+        mode: '0644'
+
