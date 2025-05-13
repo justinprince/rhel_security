@@ -1,0 +1,40 @@
+---
+- name: Create a new RHEL User
+  hosts: all
+  become: true
+  become_user: root
+
+  vars_prompt:
+    - name: username
+      prompt: "Enter the name for the account"
+      private: false
+
+    - name: userpass
+      prompt: "Enter the new password for the account"
+      private: true
+      encrypt: sha512_crypt
+      confirm: true
+      salt_size: 7
+  
+  pre_tasks:
+    - name: Verify user exists
+      command: id "{{ username }}"
+      register: user_exists
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Check if user exists
+      fail:
+        msg: "User {{ username does not exist on {{ inventory_hostname }}"
+      when: user_exists.rc != 0
+
+  tasks:
+    - name: Update user password
+      user:
+        name: "{{ username }}"
+        password: "{{ userpass }}"
+        update_password: always
+
+    - name: Success message
+      debug:
+        msg: "Password for user {{ username }} has been successfully reset on {{ inventory_hostname }}
