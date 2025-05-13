@@ -1,0 +1,89 @@
+---
+# Playbook: update_ssh_key.yml
+# Description: Updates SSH key for a specified user in specified env_name
+# Usage: ansible-playbook update_ssh_key.yml
+
+- name: Update SSH key for a user
+  hosts: "{{ target_hosts | default('all') }}"
+  become: yes  # Use sudo privileges
+  
+  vars_prompt:
+    - name: username
+      prompt: "Enter username to update SSH key for"
+      private: no
+    
+    - name: env_name
+      prompt: "Enter environment (test or prod)"
+      private: no
+      
+  pre_tasks:
+    - name: Validate env_name
+      fail:
+        msg: "Environment must be either 'test' or 'prod'"
+      when: env_name != 'test' and env_name != 'prod'
+      
+    - name: Set key filename
+      set_fact:
+        key_filename: "{{ username }}-{{ env_name }}.pub"
+        
+    - name: Check if key file exists locally
+      delegate_to: localhost
+      stat:
+        path: "../files/{{ key_filename }}"
+      register: key_file
+      
+    - name: Fail if key file doesn't exist
+      fail:
+        msg: "SSH key file not found: ../files/{{ key_filename }}"
+      when: not key_file.stat.exists
+      
+    - name: Verify user exists on target host
+      command: id "{{ username }}"
+      register: user_exists
+      ignore_errors: yes
+      changed_when: false
+      
+    - name: Check if user exists
+      fail:
+        msg: "User {{ username }} does not exist on {{ inventory_hostname }}"
+      when: user_exists.rc != 0
+  
+  tasks:
+    - name: Ensure .ssh directory exists
+      file:
+        path: "/home/{{ username }}/.ssh"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0700'
+      
+    - name: Upload SSH public key
+      copy:
+        src: "../files/{{ key_filename }}"
+        dest: "/home/{{ username }}/.ssh/{{ key_filename }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0600'
+      
+    - name: Ensure authorized_keys exists with correct permissions
+      file:
+        path: "/home/{{ username }}/.ssh/authorized_keys"
+        state: touch
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0400'
+        modification_time: preserve
+        access_time: preserve
+      changed_when: false
+      
+    - name: Add key to authorized_keys file
+      lineinfile:
+        path: "/home/{{ username }}/.ssh/authorized_keys"
+        line: "{{ lookup('file', './pubkeys/' + key_filename) }}"
+        state: present
+        backup: yes
+        
+    - name: Success message
+      debug:
+        msg: "SSH key for {{ username }} has been successfully updated on {{ inventory_hostname }} for {{ env_name }} environment."
+
