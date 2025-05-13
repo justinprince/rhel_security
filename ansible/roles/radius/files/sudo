@@ -1,0 +1,7 @@
+#%PAM-1.0
+# SSHD+PAM RADIUS for MFA token
+auth       sufficient   pam_radius_auth.so conf=/etc/pam_radius.conf debug retry=3
+auth       include      system-auth
+account    include      system-auth
+password   include      system-auth
+session    include      system-auth
