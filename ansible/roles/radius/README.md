@@ -52,7 +52,7 @@ This Role includes a "sudo" file to update /etc/pam.d/sudo but does not copy the
 ## Other Stuff
 This solution creates a dependency on a bunch external, out-of-your-control services in order to support accessing your local VMs. That's a risk.
 
-## Alternatives
+### Alternatives
 Google Authenticator PAM; but everyone has to scan a QR code and that will create an individual entry for every VM - kind of a pain.
 SSSD - requires an external domain of some kind.
 Probably some other things.
