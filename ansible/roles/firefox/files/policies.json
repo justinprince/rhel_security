@@ -1,0 +1,97 @@
+{
+  "policies":{
+    "DisableForgetButton": true
+    "SanitizeOnShutdown": {
+      "Cache": false,
+      "Cookies": false,
+      "Downloads": false,
+      "FormData": false,
+      "History": false,
+      "Sessions": false,
+      "SiteSettings": false,
+      "OfflineApps": false,
+      "Locked": true 
+    },
+    "EncryptedMediaExtensions": {
+      "Enabled": false,
+      "Locked": true
+    },
+    "FirefoxHome": {
+      "Search": false,
+      "TopSites": false,
+      "SponsoredTopSites": false,
+      "Pocket": false,
+      "SponsoredPocket": false,
+      "Highlights": false,
+      "Snippets": false,
+      "locked": true
+    },
+    "SSLVersionMin": "tls1.2",
+    "ExtensionUpdate": false,
+    "DisableFormHistory": true,
+    "PasswordmanagerEnabled": false,
+    "DisableTelemetry": true,
+    "DisableDeveloperTools": true,
+    "DisableFeedbackCommands": true,
+    "DisableFirefoxAccounts": true,
+    "DisableFirefoxStudies": true,
+    "DisableForgeButton": true,
+    "DisablePocket": true,
+    "DisablePrivateBrowsing": true,
+    "DNSOverHTTPS": {
+      "Enabled":false
+    },
+    "SearchSuggestEnabled": false,
+    "NetworkPrediction": false,
+    "DisabledCiphers": {
+      "TLS_RSA_WITH_3DES_EDE_CBC_SHA": true
+    },
+    "UserMessaging": {
+      "ExtensionRecommendations": false
+    },
+    "EnableTrackingProtection": { 
+      "Fingerprinting": true,
+      "Cryptomining": true 
+    },
+    "InstallAddonsPermission": {
+      "Default": false
+    },
+    "Permissions": {
+      "Autoplay": {
+        "Default": "block-audio-video"
+      }
+    },
+    "Preferences": {
+      "security.default_personal_cert": {
+        "Value": "Ask Every Time",
+        "Status": "locked"
+      },
+      "browser.search.update": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "PopupBlocking": {
+        "Allow": ["https://*.mil/"],
+        "Default": true,
+        "Locked": true
+      },
+      "dom.disable_window_move_resize": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "dom.disable_window_flip": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "browser.contentblocking.category": {
+        "Value": "strict",
+        "Status": "locked"
+      },
+      "extensions.htmlaboutaddons.recommendations.enabled": {
+        "Value": false,
+        "Status": "locked"  
+      }
+    }
+  }
+}
+
