@@ -3,9 +3,9 @@ This role was designed for integration with the Okta RADIUS Agent for Linux in o
 
 ## Prerequisites
 1. Figure out which server will host your RADIUS Agent
-2. Make sure firewalls, etc allow traffic in
-` sudo firewall-cmd --zone=public --add-port=1812/udp `
-or whatever zone you use.
+2. Make sure firewalls, etc allow traffic in; you can use this snippet for firewalld\
+Just make sure to update the zone as needed:
+` sudo firewall-cmd --permanent --zone=public --add-port=1812/udp`
 
 I'm in Azure and I manage my NSGs with Terraform, so it looks something like this:
 > I just threw this together from another rule, not intended to be perfect - just an example.

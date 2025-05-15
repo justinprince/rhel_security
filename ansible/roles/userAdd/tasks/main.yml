@@ -4,6 +4,24 @@
   become: true
   become_user: root
 
+  vars_prompt:
+    - name: username
+      prompt: "Enter the new name for the account: "
+      private: false
+
+    - name: userpass
+      prompt: "Enter the password for the new account: "
+      private: true
+      encrypt: sha512_crypt
+      confirm: true
+      salt_size: 7
+
   tasks:
     - name: Create the user
-
+      user:
+        name: "{{ username }}"
+        expires: -1
+        password: "{{ userpass }}"
+        update_password: always
+        group: wheel
+        state: present
