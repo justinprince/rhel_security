@@ -1,0 +1,20 @@
+---
+- name: Check if a reboot is pending
+  hosts: all
+  become: true
+
+  tasks:
+  - name: Check Linux pending reboot
+    shell: |
+      if [ -f /var/run/reboot-required ]; then echo "Yes"; else echo" No; fi
+    register: reboot_required
+    changed_when: false
+
+
+  - name: Report the response via debug
+    debug:
+      msg: >
+        {{
+          '{{ inventory_hostname }} requires a reboot' if reboot_required == 'yes' else
+          'No reboot required.'
+        }}
