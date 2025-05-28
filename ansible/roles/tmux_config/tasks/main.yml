@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+
+  tasks:
+    - name: Copy the tmux.sh file over
+      ansible.builtin.cop:
+        src: ./files/tmux.sh
+        dest: /etc/profile.d/tmux.sh
+        mode: 0755
+      tags:
+      - v-230349
+      - cat2
+
