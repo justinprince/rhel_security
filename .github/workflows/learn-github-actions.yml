@@ -37,15 +37,22 @@ jobs:
           curl -fsSL --retry 5 --retry-delay 1 --retry-all-errors -o "${crane_tar}" "${crane_url}"
           # Verify SHA256 checksum
           echo "${EXPECTED_CHECKSUM}  ${crane_tar}" | sha256sum --check --strict -
-          
+          echo "===== Home folder location ===="
           echo "${HOME}"
+          echo "==============================="
+          echo "===== GITHUB_PATH ====="
           echo "${GITHUB_PATH}"
+          echo "======================="
           # Extract directly to destination and add to PATH
           mkdir -p "${HOME}/.local/bin"
           tar -xzf "${crane_tar}" -C "${HOME}/.local/bin" crane
-          echo "${HOME}/.local/bin" >> "$GITHUB_PATH"       
-          echo "${GITHUB_PATH}"
 
+          echo "${HOME}/.local/bin" >> "$GITHUB_PATH"       
+          echo "===== GITHUB_PATH ====="
+          echo "${GITHUB_PATH}"
+          echo "======================="
           # Verify
+          echo "===== CRANE Version ====="
           crane version
+
 
